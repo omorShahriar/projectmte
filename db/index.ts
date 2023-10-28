@@ -1,8 +1,12 @@
 import * as schema from "./schema";
-import { drizzle } from "drizzle-orm/vercel-postgres";
-import { sql } from "@vercel/postgres";
-import { migrate } from "drizzle-orm/vercel-postgres/migrator";
 
-export const db = drizzle(sql, { schema });
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+
+import { migrate } from "drizzle-orm/postgres-js/migrator";
+
+const connectionString = process.env.DATABASE_URL as string;
+const client = postgres(connectionString);
+export const db = drizzle(client, { schema });
 
 migrate(db, { migrationsFolder: "drizzle" });

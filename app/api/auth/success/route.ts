@@ -3,6 +3,7 @@ import { profiles, users } from "@/db/schema";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+
 export async function GET() {
   const { getUser, getPermission } = getKindeServerSession();
   const isAdmin = getPermission("admin").isGranted;

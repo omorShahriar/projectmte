@@ -1,12 +1,5 @@
 import { relations } from "drizzle-orm";
-import {
-  integer,
-  pgTable,
-  serial,
-  text,
-  timestamp,
-  uniqueIndex,
-} from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 import { createId } from "@paralleldrive/cuid2";
 // Use this object to send drizzle queries to your DB
 

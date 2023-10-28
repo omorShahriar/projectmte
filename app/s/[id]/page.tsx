@@ -1,13 +1,7 @@
-import AddProject from "@/components/pages/profile/AddProject";
-import LivePortfolioLink from "@/components/pages/profile/LivePortfolioLink";
 import ProjectCard from "@/components/pages/projects/ProjectCard";
 import { db } from "@/db";
-
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { Avatar, Button, Divider } from "@nextui-org/react";
-import { Copy, GithubIcon, Linkedin, UserCogIcon } from "lucide-react";
-import { redirect } from "next/dist/server/api-utils";
-import Link from "next/link";
+import { Avatar, Divider } from "@nextui-org/react";
+import { GithubIcon, Linkedin } from "lucide-react";
 
 const page = async ({ params }: { params: { id: string } }) => {
   const profile = await db.query.profiles.findFirst({
