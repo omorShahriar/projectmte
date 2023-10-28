@@ -10,8 +10,6 @@ import Link from "next/link";
 
 import { redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
-
 const page = async () => {
   const { isAuthenticated, getUser, getPermission } = getKindeServerSession();
 

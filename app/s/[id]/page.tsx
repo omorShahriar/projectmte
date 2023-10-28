@@ -1,7 +1,15 @@
 import ProjectCard from "@/components/pages/projects/ProjectCard";
 import { db } from "@/db";
+import { profiles } from "@/db/schema";
 import { Avatar, Divider } from "@nextui-org/react";
 import { GithubIcon, Linkedin } from "lucide-react";
+
+export const revalidate = 3600;
+
+export const generateStaticParams = async () => {
+  const params = await db.select({ id: profiles.id }).from(profiles);
+  return params;
+};
 
 const page = async ({ params }: { params: { id: string } }) => {
   const profile = await db.query.profiles.findFirst({
