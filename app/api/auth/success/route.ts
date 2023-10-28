@@ -10,38 +10,43 @@ export async function GET() {
 
   if (!user || user == null || !user.id)
     throw new Error("something went wrong with authentication " + user);
-  const dbUser = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, user.email as string));
-
-  if (dbUser.length == 0) {
-    const userPromise = db.insert(users).values({
-      id: user.id as string,
-      name: `${user.given_name} ${user.family_name}`,
-      email: user.email as string,
-      image: user.picture,
-      createdAt: new Date(),
-    });
-    const isMteMail =
-      /@stud\.kuet\.ac\.bd$/.test(user.email as string) &&
-      /\d{2}31\d{3}/.test(user.email as string);
-
-    const profilePromise = db.insert(profiles).values({
-      userId: user.id as string,
-      role: isMteMail ? "student" : "user",
-    });
-
-    await Promise.all([userPromise, profilePromise]);
-  }
-  if (!dbUser[0].image) {
-    await db
-      .update(users)
-      .set({ image: user.picture })
+  try {
+    const dbUser = await db
+      .select()
+      .from(users)
       .where(eq(users.email, user.email as string));
+
+    if (dbUser.length == 0) {
+      const userPromise = db.insert(users).values({
+        id: user.id as string,
+        name: `${user.given_name} ${user.family_name}`,
+        email: user.email as string,
+        image: user.picture,
+        createdAt: new Date(),
+      });
+      const isMteMail =
+        /@stud\.kuet\.ac\.bd$/.test(user.email as string) &&
+        /\d{2}31\d{3}/.test(user.email as string);
+
+      const profilePromise = db.insert(profiles).values({
+        userId: user.id as string,
+        role: isMteMail ? "student" : "user",
+      });
+
+      await Promise.all([userPromise, profilePromise]);
+    }
+    if (!dbUser[0].image) {
+      await db
+        .update(users)
+        .set({ image: user.picture })
+        .where(eq(users.email, user.email as string));
+    }
+    if (isAdmin) {
+      return NextResponse.redirect("http://localhost:3000/admin");
+    }
+    return NextResponse.redirect("http://localhost:3000/");
+  } catch (e) {
+    console.log(e);
+    return NextResponse.redirect("http://localhost:3000/");
   }
-  if (isAdmin) {
-    return NextResponse.redirect("http://localhost:3000/admin");
-  }
-  return NextResponse.redirect("http://localhost:3000/");
 }
