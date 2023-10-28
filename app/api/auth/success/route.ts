@@ -43,11 +43,11 @@ export async function GET() {
         .where(eq(users.email, user.email as string));
     }
     if (isAdmin) {
-      return NextResponse.redirect("http://localhost:3000/admin");
+      return NextResponse.redirect(`${process.env.PROJECT_URL}/admin`);
     }
-    return NextResponse.redirect("http://localhost:3000/");
+    return NextResponse.redirect(process.env.PROJECT_URL as string);
   } catch (e) {
     console.log(e);
-    return NextResponse.redirect("http://localhost:3000/");
+    return NextResponse.redirect(process.env.PROJECT_URL as string);
   }
 }
