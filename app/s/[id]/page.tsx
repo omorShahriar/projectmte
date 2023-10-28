@@ -7,8 +7,12 @@ import { GithubIcon, Linkedin } from "lucide-react";
 export const revalidate = 3600;
 
 export const generateStaticParams = async () => {
-  const params = await db.select({ id: profiles.id }).from(profiles);
-  return params;
+  const params = await db
+    .select({ id: profiles.id, role: profiles.role })
+    .from(profiles);
+  return params
+    .filter((param) => param.role === "student")
+    .map((param) => ({ id: param.id }));
 };
 
 const page = async ({ params }: { params: { id: string } }) => {
