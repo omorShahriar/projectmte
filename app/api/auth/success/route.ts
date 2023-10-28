@@ -7,12 +7,14 @@ export async function GET() {
   const { getUser, getPermission } = getKindeServerSession();
   const isAdmin = getPermission("admin").isGranted;
   const user = getUser();
+
   if (!user || user == null || !user.id)
     throw new Error("something went wrong with authentication " + user);
   const dbUser = await db
     .select()
     .from(users)
     .where(eq(users.email, user.email as string));
+
   if (dbUser.length == 0) {
     const userPromise = db.insert(users).values({
       id: user.id as string,
@@ -31,6 +33,12 @@ export async function GET() {
     });
 
     await Promise.all([userPromise, profilePromise]);
+  }
+  if (!dbUser[0].image) {
+    await db
+      .update(users)
+      .set({ image: user.picture })
+      .where(eq(users.email, user.email as string));
   }
   if (isAdmin) {
     return NextResponse.redirect("http://localhost:3000/admin");

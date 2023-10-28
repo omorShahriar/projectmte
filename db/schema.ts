@@ -27,6 +27,13 @@ export const users = pgTable(
   }
 );
 
+export const usersRelations = relations(users, ({ one }) => ({
+  profile: one(profiles, {
+    fields: [users.id],
+    references: [profiles.userId],
+  }),
+}));
+
 export const profiles = pgTable(
   "profiles",
   {
@@ -36,6 +43,9 @@ export const profiles = pgTable(
     userId: text("user_id").references(() => users.id),
     bio: text("bio"),
     role: text("role").notNull().default("user"),
+    githubLink: text("github_link"),
+    linkedinLink: text("linkedin_link"),
+    coverPhoto: text("cover_photo"),
   },
   (profile) => {
     return {

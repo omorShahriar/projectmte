@@ -6,30 +6,22 @@ import { db } from "@/db";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { Avatar, Button, Divider } from "@nextui-org/react";
 import { Copy, GithubIcon, Linkedin, UserCogIcon } from "lucide-react";
+import { redirect } from "next/dist/server/api-utils";
 import Link from "next/link";
 
-import { redirect } from "next/navigation";
-
-const page = async () => {
-  const { isAuthenticated, getUser, getPermission } = getKindeServerSession();
-
-  const user = await getUser();
-  if (!(await isAuthenticated())) {
-    redirect("/");
-  }
-  const userInfo = await db.query.users.findFirst({
+const page = async ({ params }: { params: { id: string } }) => {
+  const profile = await db.query.profiles.findFirst({
     // @ts-ignore
-    where: (users, { eq }) => eq(users.id, user.id),
+    where: (profiles, { eq }) => eq(profiles.id, params.id),
     with: {
-      profile: {
-        with: {
-          projects: true,
-        },
-      },
+      projects: true,
     },
   });
+  const userInfo = await db.query.users.findFirst({
+    // @ts-ignore
+    where: (users, { eq }) => eq(users.id, profile.userId),
+  });
 
-  const profile = userInfo?.profile;
   const projects = profile?.projects;
 
   const isStudent = profile?.role === "student";
@@ -46,17 +38,6 @@ const page = async () => {
             />
             <p>{userInfo?.name}</p>
           </div>
-          <Button
-            color="danger"
-            radius="sm"
-            size="sm"
-            startContent={<UserCogIcon />}
-            href="/profile/edit"
-            as={Link}
-            className="mt-2"
-          >
-            Edit Profile
-          </Button>
         </div>
         <div className="flex gap-x-8 mt-8 px-8 items-center">
           {profile.githubLink ? (
@@ -79,9 +60,6 @@ const page = async () => {
               Linkedin
             </a>
           ) : null}
-          <div>
-            <LivePortfolioLink id={profile.id} />
-          </div>
         </div>
         <Divider className="mt-4" />
         <div className="mt-16">
@@ -91,7 +69,6 @@ const page = async () => {
         <div className="mt-12">
           <div className="flex justify-between items-center">
             <h2 className="text-3xl font-semibold my-4">Projects</h2>
-            <AddProject authorId={profile.id} />
           </div>
 
           <div className="my-12 grid grid-cols-12 gap-6">
@@ -104,8 +81,7 @@ const page = async () => {
       </div>
     );
   }
-
-  return <div className="container">Hi user, {user.email}</div>;
+  return "Not Found";
 };
 
 export default page;

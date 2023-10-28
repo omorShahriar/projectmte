@@ -3,7 +3,7 @@ import NavBar from "./NavBar";
 
 const Header = () => {
   return (
-    <header className="relative">
+    <header className="">
       <NavBar />
     </header>
   );

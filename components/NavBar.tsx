@@ -15,7 +15,7 @@ const NavBar = async () => {
   const { getUser, isAuthenticated } = getKindeServerSession();
   const user = await getUser();
   return (
-    <nav className="sticky top-0 left-0">
+    <nav className="fixed w-full bg-background z-50 top-0 left-0">
       <div className="container flex justify-between items-center py-6">
         <div className=" font-semibold text-4xl ">
           <Link href="/">MTE</Link>
